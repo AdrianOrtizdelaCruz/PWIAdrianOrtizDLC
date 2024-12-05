@@ -1,5 +1,5 @@
 const express = require("express");
-const { createTeam, listTeams } = require("../controllers/teamController");
+const { createTeam, listTeams } = require("../controllers/teamController.js");
 const { authenticateToken } = require("../middleware/auth");
 
 const router = express.Router();

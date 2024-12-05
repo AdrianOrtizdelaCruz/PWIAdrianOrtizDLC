@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Equipos</title>
+</head>
+<body>
+  <h1>Gestión de Equipos</h1>
+  <form id="createTeamForm">
+    <label for="teamName">Nombre del equipo:</label>
+    <input type="text" id="teamName" required />
+    <button type="submit">Crear Equipo</button>
+  </form>
+
+  <h2>Lista de Equipos</h2>
+  <ul id="teamsList"></ul>
+
+  <button id="logoutButton">Cerrar Sesión</button>
+
+  <script src="teams.js"></script>
+</body>
+</html>

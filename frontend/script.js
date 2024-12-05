@@ -9,6 +9,13 @@ registerForm.addEventListener("submit", async (event) => {
   const email = document.getElementById("registerEmail").value;
   const password = document.getElementById("registerPassword").value;
 
+  // Validar contraseña en el frontend (opcional, para mejorar UX)
+  const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/g;
+  if (specialCharRegex.test(password)) {
+    alert("La contraseña no puede incluir caracteres especiales.");
+    return;
+  }
+
   try {
     const response = await fetch(`${BASE_URL}/register`, {
       method: "POST",
@@ -62,3 +69,32 @@ loginForm.addEventListener("submit", async (event) => {
   }
 });
 
+// Ejemplo: Usar el token para acceder a una ruta protegida
+const protectedButton = document.getElementById("protectedButton");
+protectedButton?.addEventListener("click", async () => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    alert("Debes iniciar sesión primero.");
+    return;
+  }
+
+  try {
+    const response = await fetch(`${BASE_URL}/protected-route`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      alert(`Acceso exitoso: ${JSON.stringify(data)}`);
+    } else {
+      alert(`Error: ${data.error}`);
+    }
+  } catch (error) {
+    console.error("Error en la solicitud:", error);
+    alert("No se pudo acceder a la ruta protegida.");
+  }
+});
