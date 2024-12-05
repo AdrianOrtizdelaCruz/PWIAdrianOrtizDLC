@@ -1,31 +1,29 @@
 const Team = require("../models/teamModel");
 
-// Controlador para crear un equipo
 const createTeam = async (req, res) => {
   try {
-    const { name, members } = req.body;
+    const { name } = req.body;
 
-    // Validar los datos de entrada
-    if (!name || !members) {
-      return res.status(400).json({ error: "Name and members are required" });
+    if (!name) {
+      return res.status(400).json({ error: "El nombre del equipo es requerido" });
     }
 
-    // Crear un nuevo equipo
-    const newTeam = await Team.create({ name, members });
-    res.status(201).json({ message: "Team created successfully", team: newTeam });
+    const team = new Team({ name, owner: req.user.id });
+    await team.save();
+
+    res.status(201).json({ message: "Equipo creado exitosamente", team });
   } catch (error) {
-    res.status(500).json({ error: "Error creating team" });
+    res.status(500).json({ error: "Error al crear el equipo" });
   }
 };
 
-// Controlador para listar equipos
-const listTeams = async (req, res) => {
+const getTeams = async (req, res) => {
   try {
-    const teams = await Team.find(); // Obtener todos los equipos
-    res.status(200).json(teams);    // Responder con los equipos encontrados
+    const teams = await Team.find({ owner: req.user.id }); // Filtra equipos del usuario
+    res.status(200).json({ teams });
   } catch (error) {
-    res.status(500).json({ error: "Error listing teams" });
+    res.status(500).json({ error: "Error al obtener equipos" });
   }
 };
 
-module.exports = { createTeam, listTeams };
+module.exports = { createTeam, getTeams };

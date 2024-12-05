@@ -2,14 +2,14 @@ const BASE_URL = "http://localhost:3000/api/users"; // Backend URL
 
 // Registro de usuario
 const registerForm = document.getElementById("registerForm");
-registerForm.addEventListener("submit", async (event) => {
+registerForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   const username = document.getElementById("registerUsername").value;
   const email = document.getElementById("registerEmail").value;
   const password = document.getElementById("registerPassword").value;
 
-  // Validar contraseña en el frontend (opcional, para mejorar UX)
+  // Validar contraseña en el frontend (sin caracteres especiales)
   const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/g;
   if (specialCharRegex.test(password)) {
     alert("La contraseña no puede incluir caracteres especiales.");
@@ -40,7 +40,7 @@ registerForm.addEventListener("submit", async (event) => {
 
 // Login de usuario
 const loginForm = document.getElementById("loginForm");
-loginForm.addEventListener("submit", async (event) => {
+loginForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   const email = document.getElementById("loginEmail").value;
@@ -60,6 +60,7 @@ loginForm.addEventListener("submit", async (event) => {
       alert("Login exitoso!");
       localStorage.setItem("token", data.token); // Guardar el token en localStorage
       loginForm.reset();
+      window.location.href = "teams.html"; // Redirige a la página de gestión de equipos
     } else {
       alert(`Error: ${data.error}`);
     }
@@ -69,7 +70,7 @@ loginForm.addEventListener("submit", async (event) => {
   }
 });
 
-// Ejemplo: Usar el token para acceder a una ruta protegida
+// Botón de prueba para una ruta protegida (opcional)
 const protectedButton = document.getElementById("protectedButton");
 protectedButton?.addEventListener("click", async () => {
   const token = localStorage.getItem("token");

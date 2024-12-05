@@ -1,13 +1,11 @@
 const express = require("express");
-const { createTeam, listTeams } = require("../controllers/teamController.js");
-const { authenticateToken } = require("../middleware/auth");
+const { protect } = require("../middleware/authMiddleware");
+const { createTeam, getTeams } = require("../controllers/teamController");
 
 const router = express.Router();
 
-// Ruta para crear un equipo (requiere autenticación)
-router.post("/create", authenticateToken, createTeam);
-
-// Ruta para listar equipos (requiere autenticación)
-router.get("/list", authenticateToken, listTeams);
+router.route("/")
+  .post(protect, createTeam)  // Crear equipo (requiere autenticación)
+  .get(protect, getTeams);   // Listar equipos (requiere autenticación)
 
 module.exports = router;
