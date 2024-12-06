@@ -4,19 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestión de Equipos</title>
+  <link rel="stylesheet" href="styleTeams.css">
 </head>
 <body>
-  <h1>Gestión de Equipos</h1>
-  <form id="createTeamForm">
-    <label for="teamName">Nombre del equipo:</label>
-    <input type="text" id="teamName" required />
-    <button type="submit">Crear Equipo</button>
-  </form>
+  <div class="container">
+    <h1>Gestión de Equipos</h1>
+    <div id="teamList"></div>
 
-  <h2>Lista de Equipos</h2>
-  <ul id="teamsList"></ul>
+    <h2>Crear Equipo</h2>
+    <form id="createTeamForm">
+      <input type="text" id="teamName" placeholder="Nombre del equipo" required>
+      <input type="number" id="maxParticipants" placeholder="Número máximo de participantes" required>
+      <button type="submit">Crear Equipo</button>
+    </form>
 
-  <button id="logoutButton">Cerrar Sesión</button>
+    <button id="logoutButton">Cerrar Sesión</button>
+  </div>
 
   <script src="teams.js"></script>
 </body>
