@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crear Nuevo Equipo</title>
+  <link rel="stylesheet" href="styleCreateTeam.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Crear Nuevo Equipo</h1>
+
+    <!-- Formulario de creación de equipo -->
+    <form id="createTeamForm">
+      <label for="teamName">Nombre del equipo:</label>
+      <input type="text" id="teamName" required />
+
+      <label for="maxParticipants">Capacidad del equipo:</label>
+      <input type="number" id="maxParticipants" required />
+
+      <button type="submit">Crear Equipo</button>
+    </form>
+
+    <!-- Botón para regresar a la página de equipos -->
+    <button id="backButton">Volver a los Equipos</button>
+  </div>
+
+  <script src="createTeam.js"></script>
+</body>
+</html>

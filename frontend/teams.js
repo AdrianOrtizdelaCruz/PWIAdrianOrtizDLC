@@ -1,106 +1,68 @@
-const BASE_URL = "http://localhost:3000/api/teams";
-const token = localStorage.getItem("token"); // Obtén el token al cargar el archivo
+const BASE_URL = "http://localhost:3000/api/teams"; // URL del backend
+const token = localStorage.getItem("token"); // Obtener token del almacenamiento local
 
-// Verificar si hay token almacenado
+// Si no hay token, redirigir al login
 if (!token) {
-  alert("Debes iniciar sesión primero.");
-  window.location.href = "index.html"; // Redirigir a la página de login si no hay token
+  alert("No estás autenticado. Inicia sesión para continuar.");
+  window.location.href = "index.html"; // Redirigir al login
 }
 
-// Cargar equipos al cargar la página
-document.addEventListener("DOMContentLoaded", async () => {
-  loadTeams();
-});
-
-// Función para cargar equipos
-async function loadTeams() {
+// Función para cargar los equipos desde la base de datos
+const loadTeams = async () => {
   try {
     const response = await fetch(BASE_URL, {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    const teams = await response.json();
-    if (response.ok) {
-      const teamsContainer = document.getElementById("teamsContainer");
-      teamsContainer.innerHTML = "";
-
-      teams.forEach((team) => {
-        const teamElement = document.createElement("div");
-        teamElement.className = "team";
-        teamElement.innerHTML = `
-          <h3>${team.name}</h3>
-          <p>Capacidad: ${team.maxParticipants}</p>
-          <p>Miembros actuales: ${team.participants.length}</p>
-          <p>Puntuación: ${team.score}</p>
-          <button onclick="joinTeam('${team._id}')">Unirse</button>
-        `;
-        teamsContainer.appendChild(teamElement);
-      });
-    } else {
-      alert(`Error: ${teams.error}`);
-    }
-  } catch (error) {
-    console.error("Error al cargar equipos:", error);
-  }
-}
-
-// Función para unirse a un equipo
-async function joinTeam(teamId) {
-  try {
-    const response = await fetch(`${BASE_URL}/${teamId}/join`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`, // Enviar el token en el encabezado
       },
     });
 
     const data = await response.json();
-    if (response.ok) {
-      alert("Te has unido al equipo exitosamente.");
-      loadTeams();
-    } else {
-      alert(`Error: ${data.error}`);
+
+    // Si no se pueden cargar los equipos, mostrar mensaje
+    if (!response.ok || !data || data.length === 0) {
+      document.getElementById("teamsList").innerHTML = "<p>No se encontraron equipos. Crea uno o espera que se agreguen más.</p>";
+      return;
     }
-  } catch (error) {
-    console.error("Error al unirse al equipo:", error);
-  }
-}
 
-// Función para crear un equipo
-document.getElementById("createTeamForm").addEventListener("submit", async (event) => {
-  event.preventDefault();
+    // Mostrar los equipos en el DOM
+    const teamsList = document.getElementById("teamsList");
+    teamsList.innerHTML = ""; // Limpiar contenido previo
+    data.forEach((team) => {
+      const teamElement = document.createElement("div");
+      teamElement.classList.add("team");
 
-  const name = document.getElementById("teamName").value;
-  const maxParticipants = parseInt(document.getElementById("maxParticipants").value, 10);
+      const participants = team.participants.map((p) => p.username).join(", ");
+      teamElement.innerHTML = `
+        <h3>${team.name}</h3>
+        <p>Capacidad: ${team.participants.length}/${team.maxParticipants}</p>
+        <p>Participantes: ${participants || "Ninguno aún"}</p>
+      `;
 
-  try {
-    const response = await fetch(BASE_URL, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name, maxParticipants }),
+      teamsList.appendChild(teamElement);
     });
-
-    const data = await response.json();
-    if (response.ok) {
-      alert("Equipo creado exitosamente.");
-      loadTeams();
-    } else {
-      alert(`Error: ${data.error}`);
-    }
   } catch (error) {
-    console.error("Error al crear el equipo:", error);
+    console.error("Error al cargar los equipos:", error);
+    document.getElementById("teamsList").innerHTML = "<p>No se pudieron cargar los equipos, verifica tu conexión o tu token.</p>";
   }
-});
+};
+
+// Función para redirigir a la página de creación de equipos
+const redirectToCreateTeam = () => {
+  window.location.href = "createTeam.html"; // Redirige a la página de creación
+};
+
+// Agregar evento al botón de crear equipo
+document.getElementById("createTeamButton").addEventListener("click", redirectToCreateTeam);
 
 // Función para cerrar sesión
-document.getElementById("logoutButton").addEventListener("click", () => {
-  localStorage.removeItem("token");
-  alert("Has cerrado sesión.");
-  window.location.href = "index.html";
-});
+const logout = () => {
+  localStorage.removeItem("token"); // Eliminar token del almacenamiento local
+  window.location.href = "index.html"; // Redirigir al login
+};
+
+// Agregar evento al botón de cerrar sesión
+document.getElementById("logoutButton").addEventListener("click", logout);
+
+// Cargar equipos al iniciar la página
+document.addEventListener("DOMContentLoaded", loadTeams);

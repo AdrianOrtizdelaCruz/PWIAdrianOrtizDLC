@@ -1,23 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestión de Equipos</title>
-  <link rel="stylesheet" href="styleTeams.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="container">
-    <h1>Gestión de Equipos</h1>
-    <div id="teamList"></div>
+    <h1>Equipos Disponibles</h1>
+    
+    <!-- Lista de equipos -->
+    <div id="teamsList">
+      <p>Cargando equipos...</p>
+    </div>
 
-    <h2>Crear Equipo</h2>
-    <form id="createTeamForm">
-      <input type="text" id="teamName" placeholder="Nombre del equipo" required>
-      <input type="number" id="maxParticipants" placeholder="Número máximo de participantes" required>
-      <button type="submit">Crear Equipo</button>
-    </form>
+    <!-- Botón para crear un nuevo equipo -->
+    <button id="createTeamButton">Crear Nuevo Equipo</button>
 
+    <!-- Botón para cerrar sesión -->
     <button id="logoutButton">Cerrar Sesión</button>
   </div>
 

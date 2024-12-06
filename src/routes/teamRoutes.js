@@ -1,22 +1,28 @@
 const express = require("express");
-const { protect } = require("../middleware/authMiddleware");
+const { protect } = require("../middleware/authMiddleware"); // Asegúrate de importar el middleware de autenticación
 const Team = require("../models/teamModel");
 
 const router = express.Router();
 
 // Obtener todos los equipos
 router.get("/", protect, async (req, res) => {
-  const teams = await Team.find().populate("participants", "username");
-  res.json(teams);
+  try {
+    const teams = await Team.find().populate("participants", "username"); // Obtener equipos con participantes
+    res.json(teams);
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener los equipos" });
+  }
 });
 
 // Crear un equipo
 router.post("/", protect, async (req, res) => {
   const { name, maxParticipants } = req.body;
+
   try {
+    // Crear nuevo equipo
     const team = new Team({ name, maxParticipants });
     await team.save();
-    res.status(201).json(team);
+    res.status(201).json(team); // Respuesta con el equipo creado
   } catch (error) {
     res.status(400).json({ error: "Error al crear el equipo" });
   }
