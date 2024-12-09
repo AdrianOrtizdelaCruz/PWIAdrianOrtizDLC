@@ -1,9 +1,11 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const dotenv = require("dotenv").config();
 const path = require("path"); // Para servir archivos estáticos
 const cors = require("cors");
 const teamRoutes = require("./src/routes/teamRoutes");
 const userRoutes = require("./src/routes/userRoutes");
+
 
 const app = express();
 app.use(cors());

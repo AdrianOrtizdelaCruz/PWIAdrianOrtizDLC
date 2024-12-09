@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 
-const JWT_SECRET = "claveSuperSecreta"; // Clave para firmar el token
+const JWT_SECRET = process.env.JWT_SECRET; // Clave para firmar el token
 
 // Registrar un usuario
 const registerUser = async (req, res) => {
@@ -27,20 +27,24 @@ const registerUser = async (req, res) => {
   }
 };
 
-// Login de usuario
 const loginUser = async (req, res) => {
+  const { email, password } = req.body;
+
   try {
-    const { email, password } = req.body;
     const user = await User.findOne({ email });
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      return res.status(401).json({ error: "Credenciales inválidas" });
+    if (user && (await user.matchPassword(password))) {
+      res.json({
+        _id: user.id,
+        username: user.username,
+        email: user.email,
+        token: process.env.JWT_SECRET,
+      });
+    } else {
+      res.status(401).json({ error: "Credenciales inválidas" });
     }
-
-    // Generar token
-    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1d" });
-    res.status(200).json({ message: "Login exitoso", token });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Error al iniciar sesión" });
   }
 };
