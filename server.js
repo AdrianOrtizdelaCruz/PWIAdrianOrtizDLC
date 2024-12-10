@@ -23,9 +23,9 @@ mongoose
     process.exit(1);
   });
 
-// Rutas
-app.use("/api/teams", teamRoutes);
+// 
 app.use("/api/users", userRoutes);
+app.use("/api/teams", teamRoutes);
 
 // Servir archivos estáticos desde la carpeta "frontend"
 app.use(express.static(path.join(__dirname, "frontend")));
