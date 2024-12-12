@@ -32,10 +32,15 @@ const registerUser = async (req, res) => {
     console.log("Contraseña después del hash:", hashedPassword);
 
     // Crear un nuevo usuario
-    const newUser = new User({ username: username, email: email.toLowerCase(), password: hashedPassword });
+    const newUser = new User({
+      username,
+      email: email.toLowerCase(),
+      password: hashedPassword,
+    });
     await newUser.save();
 
-    console.log(newUser.email);
+    console.log("Usuario registrado:", newUser);
+
     // Devolver una respuesta
     res.status(201).json({ message: "Usuario registrado exitosamente" });
   } catch (error) {
@@ -44,6 +49,7 @@ const registerUser = async (req, res) => {
   }
 };
 
+// Iniciar sesión
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -60,15 +66,13 @@ const loginUser = async (req, res) => {
 
     // Comparar la contraseña
     const isPasswordMatch = await verifyPassword(password, user.password);
-    const hashedPassword = await bcryptjs.hash(password, 10);
-    console.log("Contraseña hasheada: ", hashedPassword, "Contraseña usuario: ", user.password);
     console.log("¿Contraseña correcta?:", isPasswordMatch);
 
     if (!isPasswordMatch) {
       return res.status(401).json({ error: "Credenciales inválidas" });
     }
 
-    // Generar un token
+    // Generar un token único para este inicio de sesión
     const token = jwt.sign(
       { id: user._id, jti: uuidv4() }, // Incluye un identificador único
       JWT_SECRET,
@@ -84,8 +88,5 @@ const loginUser = async (req, res) => {
     res.status(500).json({ error: "Error al iniciar sesión" });
   }
 };
-
-module.exports = { registerUser, loginUser };
-
 
 module.exports = { registerUser, loginUser };
