@@ -83,6 +83,80 @@ const joinTeam = async (teamId) => {
   }
 };
 
+// Función para buscar equipos por nombre
+const searchTeams = async (searchQuery) => {
+  try {
+    const response = await fetch(`${BASE_URL}/search?name=${encodeURIComponent(searchQuery)}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`, // Enviar el token en el encabezado
+      },
+    });
+
+    const data = await response.json();
+
+    // Si no se encuentran equipos, mostrar mensaje
+    if (!response.ok || !data || data.length === 0) {
+      document.getElementById("teamsList").innerHTML = "<p>No se encontraron equipos con ese nombre.</p>";
+      return;
+    }
+
+    // Mostrar los equipos en el DOM (reutilizamos la lógica de `loadTeams`)
+    renderTeams(data);
+  } catch (error) {
+    console.error("Error al buscar equipos:", error);
+    document.getElementById("teamsList").innerHTML = "<p>No se pudieron buscar los equipos, verifica tu conexión o tu token.</p>";
+  }
+};
+
+// Función para renderizar equipos
+const renderTeams = (teams) => {
+  const teamsList = document.getElementById("teamsList");
+  teamsList.innerHTML = ""; // Limpiar contenido previo
+  teams.forEach((team) => {
+    const teamElement = document.createElement("div");
+    teamElement.classList.add("team");
+
+    const participants = team.participants.map((p) => p.username).join(", ");
+    teamElement.innerHTML = `
+      <h3>${team.name}</h3>
+      <p>Capacidad: ${team.participants.length}/${team.maxParticipants}</p>
+      <p>Participantes: ${participants || "Ninguno aún"}</p>
+      <button class="joinTeamButton" data-id="${team._id}" 
+        ${team.participants.length >= team.maxParticipants ? "disabled" : ""}>
+        ${team.participants.length >= team.maxParticipants ? "Equipo lleno" : "Unirse al equipo"}
+      </button>
+    `;
+
+    teamsList.appendChild(teamElement);
+  });
+
+  // Agregar evento a los botones de unirse al equipo
+  document.querySelectorAll(".joinTeamButton").forEach((button) => {
+    button.addEventListener("click", (e) => joinTeam(e.target.dataset.id));
+  });
+};
+
+// Agregar evento al botón de búsqueda
+document.getElementById("searchButton").addEventListener("click", () => {
+  const searchQuery = document.getElementById("searchInput").value;
+  if (searchQuery.trim()) {
+    searchTeams(searchQuery.trim());
+  } else {
+    alert("Por favor, ingresa un término de búsqueda.");
+  }
+});
+
+// Permitir búsqueda con Enter
+document.getElementById("searchInput").addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    const searchQuery = document.getElementById("searchInput").value;
+    if (searchQuery.trim()) {
+      searchTeams(searchQuery.trim());
+    }
+  }
+});
+
 
 // Función para redirigir a la página de creación de equipos
 const redirectToCreateTeam = () => {

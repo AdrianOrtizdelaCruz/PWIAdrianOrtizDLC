@@ -53,4 +53,16 @@ router.put("/:id/join", protect, async (req, res) => {
   }
 });
 
+// Buscar equipos por nombre
+router.get("/search", protect, async (req, res) => {
+  const { name } = req.query;
+
+  try {
+    const teams = await Team.find({ name: { $regex: name, $options: "i" } }).populate("participants", "username");
+    res.json(teams);
+  } catch (error) {
+    res.status(500).json({ error: "Error al buscar los equipos" });
+  }
+});
+
 module.exports = router;

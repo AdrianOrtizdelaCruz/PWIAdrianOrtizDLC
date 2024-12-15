@@ -1,13 +1,38 @@
 button.joinTeamButton {
   margin-top: 10px;
-  background-color: #28a745;
+  background-color: #007bff;
 }
 
 button.joinTeamButton:hover {
-  background-color: #218838;
+  background-color: #0056b3;
 }
 
 button.joinTeamButton:disabled {
   background-color: #ccc;
   cursor: not-allowed;
+}
+
+.search-container {
+  margin-bottom: 20px;
+}
+
+#searchInput {
+  padding: 10px;
+  width: calc(100% - 120px);
+  margin-right: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+#searchButton {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#searchButton:hover {
+  background-color: #0056b3;
 }
