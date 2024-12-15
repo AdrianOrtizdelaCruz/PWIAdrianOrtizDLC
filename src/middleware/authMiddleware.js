@@ -12,8 +12,6 @@ const protect = async (req, res, next) => {
       req.headers.authorization.startsWith("Bearer")
     ) {
       token = req.headers.authorization.split(" ")[1];
-      console.log("Token recibido:", token); // Verifica que el token llegue correctamente
-
       if (!process.env.JWT_SECRET) {
         console.error("JWT_SECRET no está definido. Verifica el archivo .env.");
         return res.status(500).json({ error: "Error del servidor: clave secreta no definida" });
@@ -22,8 +20,7 @@ const protect = async (req, res, next) => {
       try {
         // Validación del token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        console.log("Token decodificado:", decoded);
-
+        
         // Busca al usuario asociado al ID del token
         req.user = await User.findById(decoded.id).select("-password");
 

@@ -79,8 +79,7 @@ const loginUser = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    console.log("Token generado:", token);
-
+   
     // Devolver una respuesta con el token
     res.status(200).json({ token, message: "Inicio de sesión exitoso" });
   } catch (error) {
