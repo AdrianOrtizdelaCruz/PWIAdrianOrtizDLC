@@ -53,15 +53,50 @@ router.put("/:id/join", protect, async (req, res) => {
   }
 });
 
-// Buscar equipos por nombre
+
+// Buscar equipos por nombre o participante
+// Buscar equipos por nombre o participante
 router.get("/search", protect, async (req, res) => {
   const { name } = req.query;
 
   try {
-    const teams = await Team.find({ name: { $regex: name, $options: "i" } }).populate("participants", "username");
+    // Si no hay término de búsqueda, devolver todos los equipos
+    if (!name) {
+      const allTeams = await Team.find().populate("participants", "username");
+      return res.json(allTeams);
+    }
+
+    // Realizar búsqueda con agregación para incluir nombres de participantes
+    const teams = await Team.aggregate([
+      {
+        $lookup: {
+          from: "users", // Nombre de la colección de usuarios en MongoDB
+          localField: "participants",
+          foreignField: "_id",
+          as: "participantsData",
+        },
+      },
+      {
+        $match: {
+          $or: [
+            { name: { $regex: name, $options: "i" } }, // Coincidencia en el nombre del equipo
+            { "participantsData.username": { $regex: name, $options: "i" } }, // Coincidencia en nombre del participante
+          ],
+        },
+      },
+      {
+        $project: {
+          name: 1,
+          maxParticipants: 1,
+          participants: "$participantsData",
+        },
+      },
+    ]);
+
     res.json(teams);
   } catch (error) {
-    res.status(500).json({ error: "Error al buscar los equipos" });
+    console.error("Error al buscar equipos:", error);
+    res.status(500).json({ error: "Error al buscar equipos" });
   }
 });
 
